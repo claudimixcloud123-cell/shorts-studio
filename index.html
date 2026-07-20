@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CJC Studio — Vidéos automatiques</title>
+<meta name="description" content="Génère des vidéos Reels/Shorts complètes à partir d'une simple idée." />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0e0d12" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header class="topbar">
+  <div class="logo">
+    <span class="logo-mark">●</span>
+    <span class="logo-text">CJC <span class="logo-studio">STUDIO</span></span>
+  </div>
+  <button id="btn-settings" class="btn-ghost" aria-label="Réglages API">Clés API</button>
+</header>
+
+<main class="stage">
+
+  <!-- HERO / INPUT -->
+  <section class="hero" id="view-input">
+    <p class="eyebrow">TIMECODE 00:00:00:00 — NOUVELLE PRISE</p>
+    <h1>Une idée. Une vidéo.<br/>Automatiquement.</h1>
+    <p class="lede">Écris ton sujet, choisis ton format, et laisse le pipeline écrire le script, générer les images, la voix et les sous-titres — jusqu'au MP4 final.</p>
+
+    <form id="form-idea" class="idea-form">
+      <textarea id="input-idea" placeholder="Ex : Le tardigrade, l'animal immortel" rows="2" required></textarea>
+
+      <div class="row-options">
+        <div class="option-group">
+          <label class="option-label">Format de sortie</label>
+          <div class="segmented" id="format-select">
+            <button type="button" class="seg-btn active" data-format="9:16">9:16 · Shorts/Reels</button>
+            <button type="button" class="seg-btn" data-format="16:9">16:9 · YouTube</button>
+            <button type="button" class="seg-btn" data-format="both">Les deux</button>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Durée cible</label>
+          <div class="segmented" id="duration-select">
+            <button type="button" class="seg-btn" data-duration="20">~20s</button>
+            <button type="button" class="seg-btn active" data-duration="35">~35s</button>
+            <button type="button" class="seg-btn" data-duration="60">~60s</button>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Langue</label>
+          <div class="segmented" id="lang-select">
+            <button type="button" class="seg-btn active" data-lang="fr">Français</button>
+            <button type="button" class="seg-btn" data-lang="en">English</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-clap">
+        <span class="clap-icon">🎬</span> Lancer la production
+      </button>
+    </form>
+  </section>
+
+  <!-- PIPELINE / FILMSTRIP -->
+  <section class="pipeline" id="view-pipeline" hidden>
+    <div class="filmstrip" id="filmstrip">
+      <div class="reel-step" data-step="script">
+        <div class="sprocket"></div>
+        <div class="step-num">01</div>
+        <div class="step-label">Script</div>
+        <div class="step-status">en attente</div>
+      </div>
+      <div class="reel-step" data-step="images">
+        <div class="sprocket"></div>
+        <div class="step-num">02</div>
+        <div class="step-label">Images</div>
+        <div class="step-status">en attente</div>
+      </div>
+      <div class="reel-step" data-step="voice">
+        <div class="sprocket"></div>
+        <div class="step-num">03</div>
+        <div class="step-label">Voix off</div>
+        <div class="step-status">en attente</div>
+      </div>
+      <div class="reel-step" data-step="captions">
+        <div class="sprocket"></div>
+        <div class="step-num">04</div>
+        <div class="step-label">Sous-titres</div>
+        <div class="step-status">en attente</div>
+      </div>
+      <div class="reel-step" data-step="render">
+        <div class="sprocket"></div>
+        <div class="step-num">05</div>
+        <div class="step-label">Rendu MP4</div>
+        <div class="step-status">en attente</div>
+      </div>
+    </div>
+
+    <div class="pipeline-log" id="pipeline-log" aria-live="polite"></div>
+
+    <div class="scenes-preview" id="scenes-preview"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="result" id="view-result" hidden>
+    <p class="eyebrow">TIMECODE FINAL — EXPORT PRÊT</p>
+    <h2 id="result-title">Ta vidéo est prête</h2>
+    <div class="result-players" id="result-players"></div>
+    <button class="btn-secondary" id="btn-restart">Nouvelle production</button>
+  </section>
+
+</main>
+
+<!-- SETTINGS MODAL -->
+<dialog id="modal-settings" class="modal">
+  <form method="dialog" class="modal-content">
+    <h2>Clés API</h2>
+    <p class="modal-hint">Stockées uniquement dans ton navigateur (localStorage). Jamais envoyées ailleurs qu'aux fonctions du pipeline.</p>
+
+    <label class="field">
+      <span>Clé Anthropic (script)</span>
+      <input type="password" id="key-anthropic" placeholder="sk-ant-..." autocomplete="off" />
+    </label>
+
+    <label class="field">
+      <span>Clé Gemini (images)</span>
+      <input type="password" id="key-gemini" placeholder="AIza..." autocomplete="off" />
+    </label>
+
+    <label class="field">
+      <span>Clé ElevenLabs (voix off)</span>
+      <input type="password" id="key-elevenlabs" placeholder="..." autocomplete="off" />
+    </label>
+    <p class="modal-hint small">Sans clé ElevenLabs, la voix off utilisera la synthèse vocale du navigateur (qualité moindre, pas de sous-titres synchronisés au mot près).</p>
+
+    <div class="modal-actions">
+      <button type="submit" value="cancel" class="btn-ghost">Annuler</button>
+      <button type="button" id="btn-save-keys" class="btn-primary">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="js/pipeline.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
