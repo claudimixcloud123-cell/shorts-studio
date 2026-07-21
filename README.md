@@ -1,8 +1,15 @@
-# CJC Studio
+# Shorts Studio
 
-Génère une vidéo Reels/Shorts complète (script, images, voix off, sous-titres animés, export MP4) à partir d'une simple idée, directement dans le navigateur.
+Deux modes, une seule app :
 
-## Pipeline
+- **Pipeline vidéo** (onglet du haut) — génère une vraie vidéo MP4 automatiquement (script, images, voix, sous-titres, export).
+- **Modules texte** (onglet du haut) — tes 7 prompts originaux (concept, script, prompts vidéo/image IA, voix-off, SEO, guide CapCut), avec export Word, pour ceux qui préfèrent monter à la main dans CapCut/Midjourney/ElevenLabs.
+
+Ta clé Anthropic sert aux deux modes. Gemini et ElevenLabs ne sont nécessaires que pour le pipeline vidéo automatique.
+
+⚠️ **Important** : ton app d'origine appelait `api.anthropic.com` directement depuis le navigateur sans clé ni proxy — ça ne fonctionne que dans l'aperçu d'un artifact sur claude.ai, pas une fois déployé seul sur Netlify. Les deux modes ici passent par les fonctions Netlify (`generate-module.js` pour le texte, `generate-script.js` pour la vidéo), donc ça fonctionnera vraiment une fois en ligne.
+
+## Pipeline vidéo automatique
 
 1. **Script** — Claude (Anthropic) découpe l'idée en scènes (texte de narration + prompt image par scène).
 2. **Images** — Gemini génère une image par scène.

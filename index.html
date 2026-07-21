@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>CJC Studio — Vidéos automatiques</title>
+<title>Shorts Studio — Vidéos automatiques</title>
 <meta name="description" content="Génère des vidéos Reels/Shorts complètes à partir d'une simple idée." />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#0e0d12" />
 <link rel="icon" href="icons/icon-192.png" />
@@ -16,14 +17,19 @@
 
 <header class="topbar">
   <div class="logo">
-    <span class="logo-mark">●</span>
-    <span class="logo-text">CJC <span class="logo-studio">STUDIO</span></span>
+    <span class="logo-mark">▶</span>
+    <span class="logo-text">SHORTS <span class="logo-studio">STUDIO</span></span>
   </div>
+  <nav class="tabnav" id="tabnav">
+    <button type="button" class="tab-btn active" data-tab="video">Pipeline vidéo</button>
+    <button type="button" class="tab-btn" data-tab="text">Modules texte</button>
+  </nav>
   <button id="btn-settings" class="btn-ghost" aria-label="Réglages API">Clés API</button>
 </header>
 
 <main class="stage">
 
+<div id="tab-video">
   <!-- HERO / INPUT -->
   <section class="hero" id="view-input">
     <p class="eyebrow">TIMECODE 00:00:00:00 — NOUVELLE PRISE</p>
@@ -114,6 +120,57 @@
     <div class="result-players" id="result-players"></div>
     <button class="btn-secondary" id="btn-restart">Nouvelle production</button>
   </section>
+</div> <!-- /tab-video -->
+
+<div id="tab-text" hidden>
+  <section class="hero">
+    <p class="eyebrow">MODULES TEXTE — 7 SORTIES CLAUDE</p>
+    <h1>Le kit de prod complet,<br/>prêt à copier-coller.</h1>
+    <p class="lede">Concept, script, prompts images/vidéo IA, voix-off, SEO et guide de montage CapCut — générés en une fois, à utiliser dans tes outils habituels.</p>
+
+    <form id="form-text-idea" class="idea-form">
+      <textarea id="text-input-idea" placeholder="Ex : Le tardigrade, l'animal immortel" rows="2" required></textarea>
+
+      <div class="row-options">
+        <div class="option-group">
+          <label class="option-label">Niche</label>
+          <input type="text" id="text-niche" class="text-field-input" placeholder="Tech & IA" value="Général" />
+        </div>
+        <div class="option-group">
+          <label class="option-label">Ton</label>
+          <input type="text" id="text-ton" class="text-field-input" placeholder="Viral & Accroché" value="Viral & Accroché" />
+        </div>
+        <div class="option-group">
+          <label class="option-label">Durée</label>
+          <div class="segmented" id="text-duration-select">
+            <button type="button" class="seg-btn" data-duration="20">20s</button>
+            <button type="button" class="seg-btn active" data-duration="30">30s</button>
+            <button type="button" class="seg-btn" data-duration="60">60s</button>
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="option-label">Langue</label>
+          <div class="segmented" id="text-lang-select">
+            <button type="button" class="seg-btn active" data-lang="Français">Français</button>
+            <button type="button" class="seg-btn" data-lang="English">English</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-clap">
+        <span class="clap-icon">⚡</span> Générer tout le pipeline
+      </button>
+    </form>
+  </section>
+
+  <section class="text-results" id="text-results" hidden>
+    <div class="text-results-header">
+      <div class="pipeline-log" id="text-log" aria-live="polite"></div>
+      <button class="btn-secondary" id="btn-export-word" disabled>📄 Exporter en Word</button>
+    </div>
+    <div class="text-modules-grid" id="text-modules-grid"></div>
+  </section>
+</div> <!-- /tab-text -->
 
 </main>
 
@@ -147,6 +204,7 @@
 </dialog>
 
 <script type="module" src="js/pipeline.js"></script>
+<script type="module" src="js/text-modules.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
